@@ -1,0 +1,67 @@
+{% load static %}
+{% load humanize %}
+
+<div class="bg-slate-800 rounded-lg p-6">
+    <h1 class="text-2xl font-bold text-white mb-4">
+        Register for {{ tournament.title }}
+    </h1>
+    <p class="text-slate-400 text-sm mb-6">
+        Game: {{ tournament.game.name }} • Starts {{ tournament.start_date|date:"M d, Y" }}
+    </p>
+
+    <form method="post" enctype="multipart/form-data" class="space-y-8">
+        {% csrf_token %}
+
+        <!-- Team Info (pre-filled from Tier 1) -->
+        <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+            <h3 class="font-semibold text-white mb-4">Team Information</h3>
+            <input type="hidden" name="team_id" value="{{ team.id }}">
+            <p class="text-slate-300 text-sm mb-2"><strong>Team:</strong> {{ team.name }} ({{ team.tag }})</p>
+            <p class="text-slate-300 text-sm mb-2"><strong>Region:</strong> {{ team.region|default:"—" }}</p>
+            {% if team.description %}
+                <p class="text-slate-300 text-sm mb-2"><strong>Description:</strong> {{ team.description }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Manager Contact -->
+        <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+            <h3 class="font-semibold text-white mb-4">Manager Contact</h3>
+            <input type="text" name="manager_name" placeholder="Manager Name"
+                   class="w-full bg-slate-700 border-slate-600 rounded-md p-2 text-white" required>
+            <input type="email" name="manager_email" placeholder="Manager Email"
+                   class="w-full bg-slate-700 border-slate-600 rounded-md p-2 text-white mt-3" required>
+            <input type="text" name="manager_phone" placeholder="Manager Phone"
+                   class="w-full bg-slate-700 border-slate-600 rounded-md p-2 text-white mt-3">
+        </div>
+
+        <!-- Roster Confirmation -->
+        <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+            <h3 class="font-semibold text-white mb-4">Confirm Player Roster</h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {% for player in team.players.all %}
+                <div class="flex flex-col items-center bg-slate-800 p-4 rounded-lg border border-slate-700">
+                    {% if player.avatar %}
+                        <img src="{{ player.avatar.url }}" alt="{{ player.name }}"
+                             class="w-16 h-16 rounded-full border-2 border-slate-800 mb-2">
+                    {% else %}
+                        <img src="{% static 'images/placeholder-avatar.png' %}" alt="{{ player.name }}"
+                             class="w-16 h-16 rounded-full border-2 border-slate-800 mb-2">
+                    {% endif %}
+                    <p class="text-white font-medium">{{ player.name }}</p>
+                    {% if player.role %}
+                        <p class="text-slate-400 text-xs">{{ player.role }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="flex justify-end">
+            <button type="submit"
+                    class="px-6 py-2 rounded bg-emerald-600 text-white text-sm hover:bg-emerald-700">
+                Confirm Registration
+            </button>
+        </div>
+    </form>
+</div>

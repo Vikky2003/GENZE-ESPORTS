@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="py-24 bg-slate-900">
+    <div class="container px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold mb-4 text-white">All News Articles</h2>
+            <p class="text-slate-400 max-w-2xl mx-auto">
+                Browse all updates, announcements, and breaking news from the esports world.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {% for article in articles %}
+            <div class="group bg-slate-800 hover:shadow-lg transition-all duration-300 rounded-lg overflow-hidden cursor-pointer"
+                 onclick="window.location.href='{% url 'news_detail' article.id %}'">
+                {% if article.image %}
+                    <img src="{{ article.image.url }}" alt="{{ article.title }}" 
+                         class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300">
+                {% else %}
+                    <div class="w-full h-40 bg-slate-700 flex items-center justify-center text-slate-400">
+                        No image available
+                    </div>
+                {% endif %}
+                <div class="p-4">
+                    <div class="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/50 px-3 py-1 text-xs font-medium text-slate-300 mb-2">
+                        {{ article.get_status_display }}
+                    </div>
+                    <h3 class="font-semibold text-white group-hover:text-emerald-400 transition-colors">
+                        {{ article.title }}
+                    </h3>
+                    <p class="text-slate-400 text-sm mt-1">
+                        {{ article.date|date:"M d, Y" }}
+                    </p>
+                    <a href="{% url 'news_detail' article.id %}" 
+                       class="block mt-2 text-emerald-400 hover:underline text-xs">
+                        Read More
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-8 flex justify-center space-x-2">
+            {% if articles.has_previous %}
+                <a href="?page={{ articles.previous_page_number }}" class="px-3 py-1 bg-slate-700 text-white rounded hover:bg-slate-600">Previous</a>
+            {% endif %}
+            <span class="px-3 py-1 bg-slate-800 text-white rounded">{{ articles.number }} / {{ articles.paginator.num_pages }}</span>
+            {% if articles.has_next %}
+                <a href="?page={{ articles.next_page_number }}" class="px-3 py-1 bg-slate-700 text-white rounded hover:bg-slate-600">Next</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

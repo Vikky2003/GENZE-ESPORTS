@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <!-- Hero section -->
+    {% include 'core/partials/hero_section.html' %}
+
+    <!-- Stats section -->
+    {% include 'core/partials/stats_section.html' %}
+
+    <!-- Featured tournaments section -->
+    <div class="mt-16">
+        {% include 'core/partials/featured_tournaments.html' %}
+    </div>
+
+    <!-- News section -->
+    {% include 'core/partials/news_section.html' %}
+{% endblock %}

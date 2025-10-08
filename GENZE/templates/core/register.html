@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+    {% include 'core/partials/registration_hero.html' %}
+    <div class="container px-4 py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2">
+                {% include 'core/partials/registration_form.html' %}
+            </div>
+            <div>
+                {% include 'core/partials/tournament_selection.html' %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

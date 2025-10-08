@@ -1,0 +1,44 @@
+<div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between mb-6">
+  <div class="flex items-center gap-3">
+    <i data-lucide="calendar" class="w-6 h-6 text-emerald-400"></i>
+    <h2 class="text-3xl font-bold mb-2 text-white">Match Schedule</h2>
+
+    {# Bulk Set Notifications form #}
+    <form method="post" action="{% url 'create_reminder' %}" class="reminder-form inline-flex items-center gap-2">
+      {% csrf_token %}
+      <input type="hidden" name="bulk_reminder" value="true">
+      <input type="hidden" name="notify_minutes_before" value="30">
+      {% if request.user.is_authenticated %}
+        <input type="hidden" name="email" value="{{ request.user.email }}">
+      {% else %}
+        <input type="email" name="email" placeholder="Email" class="bg-slate-700 text-white text-xs px-2 py-1 rounded" required>
+      {% endif %}
+      <button type="submit" class="px-4 py-2 rounded bg-amber-500 text-white text-sm hover:bg-amber-600">
+        Set Notifications
+      </button>
+    </form>
+  </div>
+
+  {# Filters form stays as-is #}
+  <form method="get" class="flex flex-wrap gap-4">
+    <select name="game" class="bg-slate-800 text-white p-2 rounded min-w-[160px]">
+      <option value="">All Games</option>
+      {% for g in games %}
+        <option value="{{ g.name }}" {% if game_filter == g.name %}selected{% endif %}>{{ g.name }}</option>
+      {% endfor %}
+    </select>
+    <select name="region" class="bg-slate-800 text-white p-2 rounded min-w-[160px]">
+      <option value="">All Regions</option>
+      {% for r in regions %}
+        <option value="{{ r }}" {% if region_filter == r %}selected{% endif %}>{{ r }}</option>
+      {% endfor %}
+    </select>
+    <select name="timeframe" class="bg-slate-800 text-white p-2 rounded min-w-[160px]">
+      <option value="">Any Time</option>
+      <option value="today" {% if timeframe_filter == 'today' %}selected{% endif %}>Today</option>
+      <option value="week" {% if timeframe_filter == 'week' %}selected{% endif %}>This Week</option>
+      <option value="month" {% if timeframe_filter == 'month' %}selected{% endif %}>This Month</option>
+    </select>
+    <button type="submit" class="bg-emerald-600 text-white px-4 py-2 rounded">Apply</button>
+  </form>
+</div>

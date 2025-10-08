@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Tournaments{% endblock %}
+
+{% block content %}
+{% include 'core/partials/tournament_hero.html' %}
+    <div class="container px-4 py-12">
+        <!-- Filters section -->
+        {% include 'core/partials/tournament_filters.html' %}
+
+        <!-- Grid section -->
+        {% include 'core/partials/tournament_grid.html' %}
+    </div>
+{% endblock %}

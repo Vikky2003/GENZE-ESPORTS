@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="py-16 bg-slate-900 text-white">
+  <div class="container px-4">
+
+    <!-- Breadcrumb / Back Link -->
+    <div class="mb-6">
+      <a href="{% url 'home' %}" class="text-emerald-400 hover:text-emerald-300 text-sm inline-flex items-center">
+        ← Back to News
+      </a>
+    </div>
+
+    <!-- Article Title -->
+    <h1 class="text-4xl font-bold mb-4">{{ news_item.title }}</h1>
+    <p class="text-slate-400 mb-4 flex items-center gap-3">
+      <!-- Status badge -->
+      <span class="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/50 px-3 py-1 text-xs font-medium text-slate-300">
+        {{ news_item.get_status_display }}
+      </span>
+      {{ news_item.date|date:"F j, Y" }}
+    </p>
+
+    <!-- Full-width Article Image -->
+    {% if news_item.image %}
+      <img src="{{ news_item.image.url }}" alt="{{ news_item.title }}" 
+           class="w-full h-96 object-cover rounded mb-6">
+    {% endif %}
+
+    <!-- Summary -->
+    {% if news_item.summary %}
+      <p class="text-lg leading-relaxed mb-6">{{ news_item.summary }}</p>
+    {% endif %}
+
+    <!-- Full Content -->
+    <div class="prose prose-invert max-w-none">
+      {{ news_item.content|safe }}
+    </div>
+
+  </div>
+</section>
+{% endblock %}

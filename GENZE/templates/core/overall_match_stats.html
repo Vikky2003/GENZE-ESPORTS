@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Overall Match Stats{% endblock %}
+
+{% block content %}
+<div class="container px-4 py-8 space-y-10">
+
+  <!-- Global Stats -->
+  <div class="bg-slate-900/60 border border-slate-700 rounded-lg p-6">
+    <h2 class="text-xl font-semibold text-white mb-4">Global Stats</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      <div>
+        <p class="text-2xl font-bold text-emerald-400">{{ professional_teams_count|intcomma }}</p>
+        <p class="text-slate-400 text-sm">Active Teams</p>
+      </div>
+      <div>
+        <p class="text-2xl font-bold text-emerald-400">{{ matches_played_count|intcomma }}</p>
+        <p class="text-slate-400 text-sm">Matches Played</p>
+      </div>
+      <div>
+        <p class="text-2xl font-bold text-emerald-400">₹{{ total_prize_pool|intcomma }}</p>
+        <p class="text-slate-400 text-sm">Total Prize Pool</p>
+      </div>
+      <div>
+        <p class="text-2xl font-bold text-emerald-400">{{ championships_count|intcomma }}</p>
+        <p class="text-slate-400 text-sm">Championships</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tournament Stats by Game -->
+  <div class="bg-slate-900/60 border border-slate-700 rounded-lg p-6">
+    <h2 class="text-xl font-semibold text-white mb-4">Tournament Stats by Game</h2>
+    <div class="grid grid-cols-1 md:grid-cols-{{ tournament_stats_by_game|length }} gap-6 text-center">
+      {% for stat in tournament_stats_by_game %}
+        <div class="bg-slate-800 rounded-lg p-4">
+          <p class="text-lg font-bold text-white">{{ stat.game_name }}</p>
+          <p class="text-slate-400 text-sm">Active Teams: {{ stat.active_teams|intcomma }}</p>
+          <p class="text-slate-400 text-sm">Matches Played: {{ stat.matches_played|intcomma }}</p>
+          <p class="text-slate-400 text-sm">Prize Pool: ₹{{ stat.total_prize_pool|intcomma }}</p>
+          <p class="text-slate-400 text-sm">Championships: {{ stat.championships|intcomma }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Top Performers -->
+  {% include 'core/partials/top_performers.html' %}
+
+  <!-- Team Rankings -->
+  {% include 'core/partials/team_rankings.html' %}
+
+  <!-- Points Graph -->
+  <div class="bg-slate-900/60 border border-slate-700 rounded-lg p-6">
+    <h2 class="text-xl font-semibold text-white mb-4">Points by Top Performers</h2>
+    <canvas id="pointsChart"></canvas>
+  </div>
+
+  <!-- Win/Loss Ratio Graph -->
+  <div class="bg-slate-900/60 border border-slate-700 rounded-lg p-6">
+    <h2 class="text-xl font-semibold text-white mb-4">Win/Loss Ratios</h2>
+    <canvas id="winLossChart"></canvas>
+  </div>
+
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Points Chart
+  const pointsCtx = document.getElementById('pointsChart').getContext('2d');
+  new Chart(pointsCtx, {
+    type: 'bar',
+    data: {
+      labels: {{ team_names|safe }},
+      datasets: [{
+        label: 'Points',
+        data: {{ team_points|safe }},
+        backgroundColor: 'rgba(16, 185, 129, 0.7)'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } }
+    }
+  });
+
+  // Win/Loss Chart
+  const winLossCtx = document.getElementById('winLossChart').getContext('2d');
+  new Chart(winLossCtx, {
+    type: 'bar',
+    data: {
+      labels: {{ team_names|safe }},
+      datasets: [
+        {
+          label: 'Wins',
+          data: [{% for t in top_performers %}{{ t.wins }},{% endfor %}],
+          backgroundColor: 'rgba(34, 197, 94, 0.7)'
+        },
+        {
+          label: 'Losses',
+          data: [{% for t in top_performers %}{{ t.losses }},{% endfor %}],
+          backgroundColor: 'rgba(239, 68, 68, 0.7)'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'bottom' } },
+      scales: { x: { stacked: true }, y: { stacked: true } }
+    }
+  });
+</script>
+{% endblock %}

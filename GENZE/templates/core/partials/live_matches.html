@@ -1,0 +1,83 @@
+<div>
+    <h2 class="text-3xl font-bold mb-8 text-white">Live Matches</h2>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        {% for match in live_matches %}
+        <div class="bg-slate-800 rounded-lg p-6">
+
+            <div class="flex items-center justify-between mb-2">
+                <span class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold bg-red-600 text-white">
+                    LIVE
+                </span>
+                <div class="text-slate-400 text-xs bg-slate-700 px-2 py-1 rounded">
+                    {{ match.tournament.teams|default:"—" }} Participants
+                </div>
+            </div>
+
+            <h4 class="font-bold text-white">
+                <a href="{% url 'tournament_detail' match.tournament.id %}" class="hover:text-emerald-400">
+                    {{ match.tournament.title }}
+                </a>
+            </h4>
+            <p class="text-slate-400 text-xs mt-1">
+                {{ match.game }} • {{ match.stage }}
+            </p>
+
+            <div class="mt-4 flex justify-between items-center">
+                <a href="{% url 'team_detail' match.team1.id %}" class="flex items-center gap-2 font-semibold text-lg {% if match.team1_score > match.team2_score %}text-emerald-400{% else %}text-white{% endif %}">
+                    {% if match.team1.logo %}
+                        <img src="{{ match.team1.logo.url }}" alt="{{ match.team1.name }} logo" class="w-8 h-8 rounded-full border border-slate-700">
+                    {% endif %}
+                    {{ match.team1.name }}
+                </a>
+
+                <span class="text-2xl font-bold text-emerald-400">
+                    {{ match.team1_score|default:"-" }} : {{ match.team2_score|default:"-" }}
+                </span>
+
+                <a href="{% url 'team_detail' match.team2.id %}" class="flex items-center gap-2 font-semibold text-lg {% if match.team2_score > match.team1_score %}text-emerald-400{% else %}text-white{% endif %}">
+                    {% if match.team2.logo %}
+                        <img src="{{ match.team2.logo.url }}" alt="{{ match.team2.name }} logo" class="w-8 h-8 rounded-full border border-slate-700">
+                    {% endif %}
+                    {{ match.team2.name }}
+                </a>
+            </div>
+
+            {% if match.current_round %}
+            <div class="mt-2 text-xs text-slate-400">
+                Round {{ match.current_round }}
+            </div>
+            {% endif %}
+
+            <div class="mt-1 text-xs text-slate-400">
+                Started: <span data-match-title="{{ match.tournament.title }} — {{ match.team1.name }} vs {{ match.team2.name }}"
+                               data-match-time="{{ match.live_started_at|date:'c' }}"></span>
+            </div>
+
+            {% if match.youtube_live_url %}
+            <div class="mt-4 flex flex-col gap-2">
+                <a href="{{ match.youtube_live_url }}" target="_blank"
+                   class="w-full inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium bg-emerald-600 hover:bg-emerald-500 h-9 px-4 py-2">
+                    <i data-lucide="play-circle" class="w-4 h-4"></i> Watch Live
+                </a>
+
+                {# Optional: allow reminder for match completion or recap #}
+                <form method="post" action="{% url 'create_reminder' %}" class="reminder-form inline-flex items-center gap-2">
+                    {% csrf_token %}
+                    <input type="hidden" name="match_id" value="{{ match.id }}">
+                    <input type="hidden" name="notify_minutes_before" value="0">
+                    {% if request.user.is_authenticated %}
+                        {# Email inferred from profile #}
+                    {% else %}
+                        <input type="email" name="email" placeholder="Email" class="bg-slate-700 text-white text-xs px-2 py-1 rounded" required>
+                    {% endif %}
+                    <button type="submit" class="px-3 py-1.5 rounded bg-amber-500 text-white text-sm">Notify Me of Updates</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p class="text-slate-400 col-span-full">No matches are currently live.</p>
+        {% endfor %}
+    </div>
+</div>

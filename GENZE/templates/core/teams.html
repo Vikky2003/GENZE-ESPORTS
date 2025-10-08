@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Teams{% endblock %}
+
+{% block content %}
+    {% include 'core/partials/teams_hero.html' %}
+    <div class="container px-4 py-12">
+        {% if tab == 'rankings' %}
+            {% include 'core/partials/team_rankings.html' %}
+        {% elif tab == 'stats' %}
+            {% include 'core/partials/team_stats.html' %}
+        {% endif %}
+        {% include 'core/partials/teams_grid.html' %}
+    </div>
+{% endblock %}

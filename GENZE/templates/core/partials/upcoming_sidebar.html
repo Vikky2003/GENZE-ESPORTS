@@ -1,0 +1,81 @@
+{% load humanize %}
+
+<div class="bg-slate-800 rounded-lg p-6 space-y-4">
+  <div class="flex items-center justify-between">
+    <h3 class="text-xl font-semibold text-white">Upcoming Matches</h3>
+    {# Set Notifications button at top of sidebar #}
+    <button data-set-notifications
+            class="px-3 py-1.5 rounded bg-amber-500 text-white text-sm hover:bg-amber-600">
+      Set Notifications
+    </button>
+  </div>
+
+  {% if upcoming_sidebar %}
+    {% for match in upcoming_sidebar %}
+      <div class="p-4 rounded-lg border border-slate-700 bg-slate-900/50"
+           {% if match.status == 'upcoming' %}data-upcoming-match="{{ match.id }}"{% endif %}>
+        {# Countdown before event name #}
+        {% if match.countdown %}
+          <p class="text-slate-400 text-xs mb-1">{{ match.countdown }}</p>
+        {% endif %}
+
+        {# Event name #}
+        <p class="text-white font-semibold">{{ match.tournament.title }}</p>
+
+        {# Teams row with logos and names #}
+        <div class="flex items-center gap-2 mt-2">
+          {% if match.team1.logo %}
+            <img src="{{ match.team1.logo.url }}" alt="{{ match.team1.name }} logo" class="w-6 h-6 rounded-full">
+          {% endif %}
+          <a href="{% url 'team_detail' match.team1.id %}" class="text-white hover:text-emerald-400">{{ match.team1.name }}</a>
+          <span class="text-slate-500">VS</span>
+          {% if match.team2.logo %}
+            <img src="{{ match.team2.logo.url }}" alt="{{ match.team2.name }} logo" class="w-6 h-6 rounded-full">
+          {% endif %}
+          <a href="{% url 'team_detail' match.team2.id %}" class="text-white hover:text-emerald-400">{{ match.team2.name }}</a>
+        </div>
+
+        {# Match time + game name with local-time + notification attributes #}
+        <p class="text-slate-400 text-xs mt-1">
+          <span data-match-title="{{ match.tournament.title }} — {{ match.team1.name }} vs {{ match.team2.name }}"
+                data-match-time="{{ match.match_time|date:'c' }}"></span> • {{ match.game }}
+        </p>
+
+        {# Action buttons based on status #}
+        <div class="mt-3">
+          {% if match.status == 'upcoming' %}
+            <form method="post" action="{% url 'create_reminder' %}" class="reminder-form inline-flex items-center gap-2">
+              {% csrf_token %}
+              <input type="hidden" name="match_id" value="{{ match.id }}">
+              <input type="hidden" name="notify_minutes_before" value="30">
+              {% if request.user.is_authenticated %}
+                {# Email/phone inferred from profile if not provided #}
+              {% else %}
+                <input type="email" name="email" placeholder="Email" class="bg-slate-700 text-white text-xs px-2 py-1 rounded" required>
+                <input type="text" name="phone" placeholder="+91..." class="bg-slate-700 text-white text-xs px-2 py-1 rounded">
+              {% endif %}
+              <button type="submit" class="px-3 py-1.5 rounded bg-emerald-600 text-white text-sm">Set Reminder</button>
+            </form>
+          {% elif match.status == 'live' and match.youtube_live_url %}
+            <a href="{{ match.youtube_live_url }}" target="_blank" class="px-3 py-1.5 rounded bg-emerald-600 text-white text-sm">Watch Live</a>
+          {% elif match.status == 'completed' %}
+            {% if match.youtube_live_url %}
+              <a href="{{ match.youtube_live_url }}" target="_blank" class="px-3 py-1.5 rounded bg-emerald-600 text-white text-sm">Watch Live</a>
+            {% elif match.youtube_recap_url %}
+              <a href="{{ match.youtube_recap_url }}" target="_blank" class="px-3 py-1.5 rounded bg-slate-700 text-white text-sm">View Recap</a>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="text-sm text-slate-400">No matches scheduled soon.</p>
+  {% endif %}
+
+  {# View Full Schedule link #}
+  <div class="pt-2">
+    <a href="{% url 'schedule' %}" class="inline-flex items-center gap-2 px-3 py-2 rounded bg-slate-700 text-white text-sm hover:bg-slate-600">
+      View Full Schedule
+    </a>
+  </div>
+</div>

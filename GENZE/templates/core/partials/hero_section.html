@@ -1,0 +1,90 @@
+{% load static %}
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+
+    <video autoplay loop muted playsinline class="absolute z-0 w-full h-full object-cover">
+        <source src="{% static 'videos/hero-background.mp4' %}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div class="absolute inset-0 bg-black/60 z-10"></div>
+
+    <div class="container relative z-20 px-4 text-center">
+        <div class="mx-auto max-w-4xl space-y-8">
+
+            <div class="flex justify-center">
+                <div class="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/50 px-4 py-2 text-sm font-medium text-slate-300">
+                    <i data-lucide="trophy" class="h-4 w-4 text-emerald-400"></i>
+                    Championship 2025 Now Live
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h1 class="text-4xl font-bold tracking-tight text-balance sm:text-6xl lg:text-7xl text-white">
+                    The Ultimate <span class="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">Esports</span> Experience
+                </h1>
+                <p class="mx-auto max-w-2xl text-lg text-slate-300 text-pretty sm:text-xl">
+                    Join thousands of competitive gamers in the most prestigious tournaments. Watch live streams, compete for glory, and become a legend.
+                </p>
+            </div>
+
+            <div class="flex flex-col gap-4 sm:flex-row sm:justify-center">
+                <a href="{% url 'register' %}" 
+                   class="inline-flex items-center justify-center gap-2 rounded-md text-lg font-medium transition-all h-14 px-8 py-6 bg-emerald-600 text-white shadow-lg hover:bg-emerald-700">
+                    <i data-lucide="user-plus" class="h-5 w-5"></i> Register Now
+                </a>
+                <a href="https://www.youtube.com" target="_blank" 
+                   class="inline-flex items-center justify-center gap-2 rounded-md text-lg font-medium transition-all h-14 px-8 py-6 border border-slate-600 bg-slate-800/50 text-slate-100 hover:bg-slate-700">
+                    <i data-lucide="play" class="h-5 w-5"></i> Watch Live
+                </a>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+                <div>
+                    <p class="text-3xl font-bold text-white">5K+</p>
+                    <p class="text-slate-300 text-sm">Active Players</p>
+                </div>
+                <div>
+                    <p class="text-3xl font-bold text-white">₹2L+</p>
+                    <p class="text-slate-300 text-sm">Prize Pool</p>
+                </div>
+                <div>
+                    <p class="text-3xl font-bold text-white">24/7</p>
+                    <p class="text-slate-300 text-sm">Live Events</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% if other_featured_articles %}
+<section class="bg-slate-900 py-12">
+    <div class="container px-4">
+        <h2 class="text-2xl font-bold text-white mb-6">More Featured News</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% for article in other_featured_articles %}
+            <div class="group bg-slate-800 hover:shadow-lg transition-all duration-300 rounded-lg cursor-pointer"
+                 onclick="window.location.href='{% url 'news_detail' article.id %}'">
+                {% if article.image %}
+                    <img src="{{ article.image.url }}" alt="{{ article.title }}" 
+                         class="w-full h-40 object-cover rounded-t-lg group-hover:scale-105 transition-transform duration-300">
+                {% else %}
+                    <div class="w-full h-40 bg-slate-700 flex items-center justify-center text-slate-400">
+                        No image available
+                    </div>
+                {% endif %}
+                <div class="p-4">
+                    <h3 class="font-semibold text-white group-hover:text-emerald-400 transition-colors">
+                        {{ article.title }}
+                    </h3>
+                    <p class="text-slate-400 text-sm mt-1">
+                        {{ article.date|date:"M d, Y" }}
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}

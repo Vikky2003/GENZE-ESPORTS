@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Results{% endblock %}
+
+{% block content %}
+    {# Hero section with View Statistics button linking to match-stats #}
+    {% include 'core/partials/results_hero.html' %}
+
+    <div class="container px-4 py-12">
+        {# Live Matches section #}
+        {% include 'core/partials/live_matches.html' %}
+
+        {# Grid section for Recent Results and Tournament Brackets #}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12">
+            {% include 'core/partials/recent_results.html' %}
+            {% include 'core/partials/tournament_brackets.html' %}
+        </div>
+
+        {# View All Results button #}
+        <div class="mt-12 text-center">
+            <a href="{% url 'results' %}?view=all{% if game_filter %}&game={{ game_filter }}{% endif %}"
+               class="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-emerald-600 text-white font-medium hover:bg-emerald-500 transition-colors">
+                <i data-lucide="list" class="w-5 h-5"></i> View All Results
+            </a>
+        </div>
+    </div>
+{% endblock %}

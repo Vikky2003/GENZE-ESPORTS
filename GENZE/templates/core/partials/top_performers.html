@@ -1,0 +1,40 @@
+{# core/templates/core/partials/top_performers.html #}
+{% load humanize %}
+{% load static %}
+
+<div class="bg-slate-900/60 border border-slate-700 rounded-lg p-6">
+  <h2 class="text-xl font-semibold text-white mb-4">Top Performers</h2>
+
+  {% if top_performers %}
+    <div class="divide-y divide-slate-700">
+      {% for t in top_performers %}
+        <div class="py-3 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            {% if t.logo %}
+              <img src="{{ t.logo.url }}" alt="{{ t.name }} logo" class="w-6 h-6 rounded-full border border-slate-700">
+            {% else %}
+              <img src="{% static 'images/placeholder-logo.png' %}" alt="placeholder logo" class="w-6 h-6 rounded-full border border-slate-700">
+            {% endif %}
+            <div>
+              <p class="text-white font-semibold">{{ t.name }}</p>
+              <p class="text-slate-400 text-xs">{{ t.game }}</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-emerald-400 text-sm font-semibold">
+              {{ t.points|intcomma }} pts
+              {% if t.points_delta is not None %}
+                <span class="{% if t.points_delta > 0 %}text-green-400{% elif t.points_delta < 0 %}text-red-400{% else %}text-slate-400{% endif %} text-xs ml-1">
+                  {% if t.points_delta > 0 %}+{% endif %}{{ t.points_delta }}
+                </span>
+              {% endif %}
+            </p>
+            <p class="text-slate-400 text-xs">W {{ t.wins }} • L {{ t.losses }} • MP {{ t.matches_played }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-slate-400">No performers available.</p>
+  {% endif %}
+</div>

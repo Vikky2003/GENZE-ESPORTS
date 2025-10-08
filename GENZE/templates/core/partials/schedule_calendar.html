@@ -1,0 +1,32 @@
+<div class="space-y-6">
+    {% for date, matches_on_day in grouped_matches.items %}
+    <div>
+        <div class="flex items-center gap-3 mb-4">
+            <h4 class="text-lg font-semibold text-white">{{ date|date:"l, F d, Y" }}</h4>
+            <div class="flex-1 h-px bg-slate-700"></div>
+            <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold border-slate-700 text-slate-300">
+                {{ matches_on_day|length }} matches
+            </span>
+        </div>
+        <div class="space-y-4">
+            {% for match in matches_on_day %}
+            <div class="bg-slate-800 hover:shadow-md transition-shadow rounded-lg p-6">
+                <div class="flex flex-col lg:flex-row lg:items-center gap-4">
+                    <div class="text-sm font-medium text-slate-400 min-w-[80px]">{{ match.match_time|time:"g:i A" }}</div>
+                    <div class="flex items-center gap-4 flex-1">
+                        <a href="{% url 'schedule' %}?team={{ match.team1.id }}" class="font-medium text-white hover:text-emerald-400 truncate">{{ match.team1.name }}</a>
+                        <span class="text-slate-400 font-medium">VS</span>
+                        <a href="{% url 'schedule' %}?team={{ match.team2.id }}" class="font-medium text-white hover:text-emerald-400 truncate">{{ match.team2.name }}</a>
+                    </div>
+                    <a href="{% url 'tournament_detail' match.tournament.id %}" class="text-sm text-slate-300 hover:text-emerald-400">{{ match.tournament.title }}</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="bg-slate-800 p-8 rounded-lg text-center">
+        <p class="text-slate-400">No upcoming matches scheduled. Please check back later.</p>
+    </div>
+    {% endfor %}
+</div>

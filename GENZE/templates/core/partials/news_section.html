@@ -1,0 +1,93 @@
+{% load static %}
+<section class="py-24 bg-slate-900">
+    <div class="container px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold mb-4 text-white">Latest News & Updates</h2>
+            <p class="text-slate-400 max-w-2xl mx-auto">
+                Stay updated with the latest developments in competitive gaming and tournament announcements.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            {% if main_article %}
+            <!-- Big card -->
+            <div class="lg:col-span-2">
+                <div class="group bg-slate-800 hover:shadow-xl transition-all duration-300 h-full rounded-lg overflow-hidden cursor-pointer"
+                     onclick="window.location.href='{% url 'news_detail' main_article.id %}'">
+                    {% if main_article.image %}
+                        <img src="{{ main_article.image.url }}" alt="{{ main_article.title }}" 
+                             class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300">
+                    {% else %}
+                        <div class="w-full h-64 bg-slate-700 flex items-center justify-center text-slate-400">
+                            No image available
+                        </div>
+                    {% endif %}
+                    <div class="p-6">
+                        <!-- Status badge -->
+                        <div class="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/50 px-3 py-1 text-xs font-medium text-slate-300 mb-3">
+                            {{ main_article.get_status_display }}
+                        </div>
+                        <h3 class="text-2xl group-hover:text-emerald-400 transition-colors text-white font-bold">
+                            {{ main_article.title }}
+                        </h3>
+                        <div class="flex items-center text-sm text-slate-400 my-2">
+                            {{ main_article.date|date:"M d, Y" }}
+                        </div>
+                        <p class="text-slate-400 mb-4">
+                            {{ main_article.summary|truncatewords:25|default:"No summary available" }}
+                        </p>
+                        <a href="{% url 'news_detail' main_article.id %}" 
+                           class="inline-flex items-center justify-center rounded-md text-sm font-medium border border-slate-700 bg-transparent hover:bg-slate-700 px-4 py-2">
+                            Read More
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Small cards -->
+            <div class="space-y-6">
+                {% for article in other_articles %}
+                <div class="group bg-slate-800 hover:shadow-lg transition-all duration-300 rounded-lg overflow-hidden cursor-pointer"
+                     onclick="window.location.href='{% url 'news_detail' article.id %}'">
+                    {% if article.image %}
+                        <img src="{{ article.image.url }}" alt="{{ article.title }}" 
+                             class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300">
+                    {% else %}
+                        <div class="w-full h-40 bg-slate-700 flex items-center justify-center text-slate-400">
+                            No image available
+                        </div>
+                    {% endif %}
+                    <div class="p-4">
+                        <!-- Status badge -->
+                        <div class="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/50 px-3 py-1 text-xs font-medium text-slate-300 mb-2">
+                            {{ article.get_status_display }}
+                        </div>
+                        <h3 class="font-semibold text-white group-hover:text-emerald-400 transition-colors">
+                            {{ article.title }}
+                        </h3>
+                        <p class="text-slate-400 text-sm mt-1">
+                            {{ article.date|date:"M d, Y" }}
+                        </p>
+                        <a href="{% url 'news_detail' article.id %}" 
+                           class="block mt-2 text-emerald-400 hover:underline text-xs">
+                            Read More
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+
+        <!-- View All News Button -->
+<div class="mt-8 text-center">
+    <a href="{% url 'news' %}" 
+       class="inline-flex items-center justify-center gap-2 rounded-md text-lg font-medium transition-all px-6 py-3 bg-transparent border border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white shadow-lg">
+        <i data-lucide="newspaper" class="h-5 w-5"></i>
+        View All News
+    </a>
+</div>
+    </div>
+</section>

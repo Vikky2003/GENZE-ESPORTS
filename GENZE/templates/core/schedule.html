@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block title %}Schedule{% endblock %}
+
+{% block content %}
+
+{# Hero sits full-width, no extra container padding #}
+{% include 'core/partials/schedule_hero.html' %}
+
+<div class="container mx-auto px-4 py-10">
+  {# Title + Filters #}
+  {% include 'core/partials/schedule_filters.html' %}
+
+  {# Main row: Left schedule list + Right upcoming sidebar #}
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2">
+      {% include 'core/partials/schedule_list.html' %}
+    </div>
+    <div>
+      {% include 'core/partials/upcoming_sidebar.html' %}
+    </div>
+  </div>
+</div>
+
+<script>
+  // Helper: POST via fetch returning JSON
+  async function postJSON(url, formData) {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+      body: formData
+    });
+    try { return await res.json(); } catch { return { ok: false, error: 'Unexpected response' }; }
+  }
+
+  // Handle single "Remind Me" / "Set Reminder" form submit via AJAX
+  document.addEventListener('submit', async (e) => {
+    const form = e.target;
+    const actionUrl = "{% url 'create_reminder' %}";
+    if (form.action && form.action.indexOf(actionUrl) !== -1) {
+      e.preventDefault();
+
+      const data = new FormData(form);
+
+      // Ensure email is included for backend to send confirmation
+      {% if request.user.is_authenticated %}
+        if (!data.get('email')) {
+          data.append('email', '{{ request.user.email }}');
+        }
+      {% endif %}
+
+      const json = await postJSON(actionUrl, data);
+      if (json.redirect && json.url) {
+        window.location.href = json.url;
+        return;
+      }
+      alert(json.ok ? 'Reminder set! Confirmation email sent.' : (json.error || 'Failed to set reminder'));
+    }
+  });
+
+  // Handle "Set Notifications" button — bulk reminders for visible upcoming matches
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-set-notifications]');
+    if (!btn) return;
+
+    // Collect upcoming match IDs from both main list and sidebar
+    const ids = Array.from(document.querySelectorAll('[data-upcoming-match]'))
+      .map(el => el.getAttribute('data-upcoming-match'))
+      .filter(Boolean);
+
+    if (ids.length === 0) {
+      alert('No upcoming matches to set notifications for.');
+      return;
+    }
+
+    const actionUrl = "{% url 'create_reminder' %}";
+    for (const id of ids) {
+      const data = new FormData();
+      data.append('match_id', id);
+      data.append('notify_minutes_before', '30');
+
+      // Ensure email is included for backend to send confirmation
+      {% if request.user.is_authenticated %}
+        data.append('email', '{{ request.user.email }}');
+      {% endif %}
+
+      const json = await postJSON(actionUrl, data);
+      if (json.redirect && json.url) {
+        window.location.href = json.url;
+        return;
+      }
+      if (!json.ok) {
+        console.warn('Reminder failed for match', id, json);
+      }
+    }
+    alert('Notifications set for upcoming matches. Confirmation emails sent.');
+  });
+</script>
+
+{% endblock %}

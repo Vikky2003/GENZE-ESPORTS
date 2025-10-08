@@ -1,0 +1,53 @@
+{% load static %}
+
+<section class="relative py-12 bg-slate-900/50">
+    <div class="container px-4">
+
+        <!-- Heading -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold tracking-tight mb-4 sm:text-5xl lg:text-6xl text-white">
+                Compete in <span class="text-emerald-400">Elite</span> Tournaments
+            </h1>
+            <p class="text-lg text-slate-300 max-w-2xl mx-auto">
+                Join competitive tournaments across multiple games with massive prize pools, professional streaming, and global recognition.
+            </p>
+        </div>
+
+        <!-- Search & Sort -->
+        <form method="get" class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+            <input type="text" name="search" placeholder="Search tournaments..."
+                   value="{{ request.GET.search }}"
+                   class="px-4 py-2 rounded-md bg-slate-800 text-white border border-slate-700 w-full sm:w-1/3">
+
+            <select name="sort" class="px-4 py-2 rounded-md bg-slate-800 text-white border border-slate-700 w-full sm:w-1/4">
+                <option value="">Sort by</option>
+                <option value="prize" {% if request.GET.sort == 'prize' %}selected{% endif %}>Prize Pool</option>
+                <option value="date" {% if request.GET.sort == 'date' %}selected{% endif %}>Start Date</option>
+            </select>
+
+            <button type="submit" class="px-6 py-2 rounded-md bg-emerald-600 text-white hover:bg-emerald-700">
+                Apply
+            </button>
+        </form>
+
+        <!-- Filters -->
+        <div class="flex flex-wrap gap-3 mb-8">
+            <!-- Game filters -->
+            {% for game in games %}
+                <a href="?game={{ game.name }}" 
+                   class="px-4 py-2 rounded-full border border-slate-700 bg-slate-800/50 text-slate-300 hover:bg-emerald-600 hover:text-white">
+                    {{ game.name }}
+                </a>
+            {% endfor %}
+
+            <!-- Status filters -->
+            {% for value,label in statuses %}
+                <a href="?status={{ value }}" 
+                   class="px-4 py-2 rounded-full border border-slate-700 bg-slate-800/50 text-slate-300 hover:bg-emerald-600 hover:text-white">
+                    {{ label }}
+                </a>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>

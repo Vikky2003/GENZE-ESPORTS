@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Matches Calendar{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+  <!-- Month navigation -->
+  <div class="flex justify-between items-center mb-6">
+    <a href="{% url 'calendar_view' %}?month={{ prev_month }}&year={{ prev_year }}"
+       class="px-4 py-2 bg-slate-700 text-white rounded hover:bg-slate-600">
+      ← {{ prev_month }}/{{ prev_year }}
+    </a>
+    <h1 class="text-2xl font-bold text-white">
+      {{ month }}/{{ year }}
+    </h1>
+    <a href="{% url 'calendar_view' %}?month={{ next_month }}&year={{ next_year }}"
+       class="px-4 py-2 bg-slate-700 text-white rounded hover:bg-slate-600">
+      {{ next_month }}/{{ next_year }} →
+    </a>
+  </div>
+
+  <!-- Calendar grid -->
+  <div class="grid grid-cols-7 gap-4">
+    {% for day in calendar_days %}
+      <div class="bg-slate-800 rounded-lg p-2 {% if day.date == today %}ring-2 ring-emerald-400{% endif %}">
+        <div class="text-white font-semibold text-sm mb-2">
+          {{ day.date|date:"M d" }}
+        </div>
+        {% if day.matches %}
+          <div class="space-y-2">
+            {% for match in day.matches %}
+              <div class="
+                rounded p-2 text-xs text-white
+                {% if match.status == 'completed' %}bg-green-700
+                {% elif match.status == 'live' %}bg-yellow-700
+                {% else %}bg-blue-700{% endif %}
+              ">
+                {{ match.match_time|time:"g:i A" }}<br>
+                {{ match.team1.name }} vs {{ match.team2.name }}
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-slate-500 text-xs">No matches</p>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

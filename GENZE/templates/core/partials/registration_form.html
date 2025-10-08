@@ -1,0 +1,66 @@
+{% load static %}
+
+<form method="post" enctype="multipart/form-data" class="space-y-8">
+    {% csrf_token %}
+
+    <!-- Team Information -->
+    <div class="bg-slate-800 p-6 rounded-lg">
+        <h3 class="font-semibold text-white mb-4">Team Information</h3>
+        <div class="space-y-6">
+            <input name="teamName" placeholder="Enter your team name"
+                   class="w-full bg-slate-700 border-slate-600 rounded-md p-2 text-white" required>
+
+            <input name="teamTag" placeholder="Enter your team tag (e.g., NXS)"
+                   class="w-full bg-slate-700 border-slate-600 rounded-md p-2 text-white" required>
+
+            <!-- Game selection using Game.id -->
+            <select name="teamGame" class="w-full bg-slate-700 border-slate-600 rounded-md p-2 text-white" required>
+                {% for g in games %}
+                    <option value="{{ g.id }}">{{ g.name }}</option>
+                {% endfor %}
+            </select>
+
+            <input name="teamRegion" placeholder="Enter your region"
+                   class="w-full bg-slate-700 border-slate-600 rounded-md p-2 text-white">
+
+            <!-- Team description -->
+            <textarea name="teamDescription" placeholder="Describe your team, achievements, and goals"
+                      class="w-full bg-slate-700 border-slate-600 rounded-md p-2 text-white"></textarea>
+
+            <div>
+                <label class="block text-slate-300 mb-2">Team Logo</label>
+                <input type="file" name="logo" class="w-full text-slate-300">
+            </div>
+            <div>
+                <label class="block text-slate-300 mb-2">Team Banner</label>
+                <input type="file" name="banner" class="w-full text-slate-300">
+            </div>
+        </div>
+    </div>
+
+    <!-- Player Roster -->
+    <div class="bg-slate-800 p-6 rounded-lg">
+        <h3 class="font-semibold text-white mb-4">Player Roster</h3>
+        <p class="text-slate-400 text-sm mb-4">Add up to 5 players with their role and avatar</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% for i in "12345" %}
+                <div class="space-y-3 p-4 rounded-lg border border-slate-700 bg-slate-900/50">
+                    <input type="text" name="player_name_{{ i }}" placeholder="Player {{ i }} Name"
+                           class="w-full bg-slate-700 border-slate-600 rounded-md p-2 text-white">
+                    <input type="text" name="player_role_{{ i }}" placeholder="Role (e.g., Captain, Sniper)"
+                           class="w-full bg-slate-700 border-slate-600 rounded-md p-2 text-white">
+                    <input type="file" name="player_avatar_{{ i }}" class="w-full text-slate-300">
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="flex justify-end">
+        <button type="submit"
+                class="px-6 py-2 rounded bg-emerald-600 text-white text-sm hover:bg-emerald-700">
+            Register Team
+        </button>
+    </div>
+</form>

@@ -1,0 +1,24 @@
+{% load humanize %}
+<div class="bg-slate-800 p-6 rounded-lg">
+    <h3 class="font-semibold text-white mb-4">Open Tournaments</h3>
+    <div class="space-y-4">
+        {% for t in open_tournaments %}
+        <div class="p-4 rounded-lg border border-slate-700 bg-slate-900/50">
+            <div class="flex items-center justify-between">
+                <a href="{% url 'tournament_detail' t.id %}" class="text-white font-semibold hover:text-emerald-400">{{ t.title }}</a>
+                {% if t.featured %}
+                    <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-600/20 text-emerald-400 border border-emerald-600">Featured</span>
+                {% endif %}
+            </div>
+            <p class="text-slate-400 text-sm mt-1">{{ t.game.name }} • Starts {{ t.start_date }}</p>
+            <p class="text-slate-300 text-sm">Prize: ₹{{ t.prize_pool|intcomma}}</p>
+            <p class="text-slate-400 text-sm">Location: {{ t.location }}</p>
+            <a href="{% url 'tournament_detail' t.id %}" class="mt-2 inline-flex items-center justify-center rounded-md text-sm font-medium border border-slate-600 bg-slate-700 hover:bg-slate-600 h-9 px-4 py-2">
+                Register for Tournament
+            </a>
+        </div>
+        {% empty %}
+        <p class="text-slate-400">No open tournaments available.</p>
+        {% endfor %}
+    </div>
+</div>

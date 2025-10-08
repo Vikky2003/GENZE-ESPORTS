@@ -1,0 +1,81 @@
+{% load static %}
+{% load humanize %}
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for tournament in tournaments %}
+    <div class="group bg-slate-800 hover:shadow-xl transition-all duration-300 overflow-hidden rounded-lg flex flex-col">
+        
+        <!-- Image -->
+        <a href="{% url 'tournament_detail' tournament.pk %}" class="relative block">
+            {% if tournament.image and tournament.image.url %}
+                <img src="{{ tournament.image.url }}" alt="{{ tournament.title }}" 
+                     class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300">
+            {% else %}
+                <img src="{% static 'images/default-tournament.png' %}" alt="Default tournament image" 
+                     class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300">
+            {% endif %}
+        </a>
+
+        <!-- Content -->
+        <div class="p-6 flex flex-col flex-grow">
+            
+            <!-- Status badge -->
+            <div class="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/50 px-3 py-1 text-xs font-medium text-slate-300 mb-3">
+                {{ tournament.get_status_display }}
+            </div>
+
+            <!-- Title -->
+            <h3 class="text-lg group-hover:text-emerald-400 transition-colors font-bold text-white">
+                {{ tournament.title }}
+            </h3>
+
+            <!-- Game -->
+            <p class="text-slate-400 text-sm mb-2">
+                {{ tournament.game.name }}
+            </p>
+
+            <!-- Prize pool & teams -->
+            <div class="flex items-center justify-between text-sm mb-2">
+                <span class="text-emerald-400 font-semibold">
+                    Prize Pool: ₹{{ tournament.prize_pool|intcomma }}
+                </span>
+                <span class="text-slate-400">
+                    Teams: {{ tournament.teams|intcomma }}
+                </span>
+            </div>
+
+            <!-- Dates -->
+            <p class="text-slate-300 text-xs">Dates: {{ tournament.start_date }} – {{ tournament.end_date }}</p>
+
+            <!-- Location -->
+            {% if tournament.location %}
+                <p class="text-slate-300 text-xs">Location: {{ tournament.location }}</p>
+            {% endif %}
+
+            <!-- Registration deadline -->
+            {% if tournament.registration_deadline %}
+                <p class="text-slate-300 text-xs">Registration Until: {{ tournament.registration_deadline }}</p>
+            {% endif %}
+
+            <!-- Format -->
+            {% if tournament.format %}
+                <p class="text-slate-300 text-xs">Format: {{ tournament.format }}</p>
+            {% endif %}
+
+            <!-- Buttons -->
+            <div class="flex gap-2 mt-4">
+                <a href="{% url 'register' %}" 
+                   class="flex-1 text-center px-4 py-2 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 text-sm">
+                    Register
+                </a>
+                <a href="{% url 'tournament_detail' tournament.id %}" 
+                   class="flex-1 text-center px-4 py-2 rounded-md bg-slate-700 text-white hover:bg-slate-600 text-sm">
+                    Learn More
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-slate-400">No tournaments available at the moment.</p>
+    {% endfor %}
+</div>
